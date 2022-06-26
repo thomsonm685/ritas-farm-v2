@@ -5,6 +5,17 @@ import cookieParser from "cookie-parser";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import "dotenv/config";
 
+import mongoConnection from "../src/assets/mongoConnection.js";
+import {
+  admin_data,
+  add_workers,
+  remove_workers,
+  new_list,
+  order_data,
+  remove_products,
+} from "../src/assets/server_side.js";
+import bodyParser from "koa-bodyparser";
+
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 
@@ -61,15 +72,51 @@ export async function createServer(
     }
   });
 
-  app.get("/products-count", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Product } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    );
+  app.set(
+    "top-level-oauth-cookie",
+    await mongoConnection.GetAdmin().accessToken
+  );
 
-    const countData = await Product.count({ session });
-    res.status(200).send(countData);
+  // router.get("(/get_orders)", async (ctx) => {
+  //   ctx.body = await get_orders();
+  // });
+
+  app.get("(/server_side)", verifyRequest(app), async (req, res) => {
+    if (req.query.data === "admin") res.send(await admin_data());
+    if (req.query.data === "orders") res.send(await order_data());
   });
+
+  app.post("(/server_side)", verifyRequest(app), async (req, res) => {
+    let theReq = req.body;
+    console.log("ctx.request.body:", theReq);
+    if (theReq.type === "add") req.body = await add_workers(theReq.names);
+    else if (theReq.type === "new list") res.send(await new_list(theReq.names));
+    else if (theReq.type === "remove")
+      res.send(await remove_workers(theReq.names));
+    else if (theReq.type === "remove products")
+      res.send(
+        await remove_products(
+          theReq.order,
+          theReq.worker,
+          theReq.skippedProducts,
+          theReq.removedProducts,
+          theReq.fulfilledWeights,
+          theReq.databaseOnly,
+          theReq.noCharge
+        )
+      );
+    // else if(theReq.type === 'remove products') ctx.body = await mongoConnection.RemoveProducts(theReq.orderId, theReq.worker, theReq.skippedProducts);
+  });
+
+  // app.get("/products-count", verifyRequest(app), async (req, res) => {
+  //   const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //   const { Product } = await import(
+  //     `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+  //   );
+
+  //   const countData = await Product.count({ session });
+  //   res.status(200).send(countData);
+  // });
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
     try {
