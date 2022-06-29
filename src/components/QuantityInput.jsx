@@ -7,6 +7,7 @@ import {
 
 const QuantityInput = ({
   qty,
+  variantId,
   weightUnit,
   classes,
   checkIfChecked,
@@ -115,7 +116,11 @@ const QuantityInput = ({
       {!noWeight ? (
         <div className="weightContainer" data-name={name}>
           <span style={{ fontSize: "5rem" }}>{weightUnit}:</span>
-          <input type="number" className="weightInput" />
+          <input
+            type="number"
+            className="weightInput"
+            data-variantId={variantId}
+          />
         </div>
       ) : (
         ""
@@ -131,14 +136,15 @@ const QuantityInput = ({
           <AiFillCloseCircle size={77} color="#ff4848" />
         </button>
         {!noSkip ? (
-          <button
-            onClick={onSkip}
-            className="qtySkip qtyButton"
-            style={{ display: finishQty ? "none" : "inline-block" }}
-          >
-            <IoPlaySkipForwardCircleSharp size={84} color="#fbc220" />
-          </button>
+          <></>
         ) : (
+          // <button
+          //   onClick={onSkip}
+          //   className="qtySkip qtyButton"
+          //   style={{ display: finishQty ? "none" : "inline-block" }}
+          // >
+          //   <IoPlaySkipForwardCircleSharp size={84} color="#fbc220" />
+          // </button>
           ""
         )}
         <button

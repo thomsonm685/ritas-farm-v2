@@ -100,7 +100,7 @@ import { Fullscreen } from "@shopify/app-bridge/actions";
 
 // }
 
-const HomePage = ({ orders }) => {
+const HomePage = ({ switchPage }) => {
   const app = useAppBridge();
   const fullscreen = Fullscreen.create(app);
 
@@ -602,6 +602,13 @@ const HomePage = ({ orders }) => {
                       For Customer:{" "}
                       <strong>{orderInfo[0].shippingAddress.name}</strong>?
                       <div>-</div>
+                      {orderInfo[0].note ? (
+                        <div>
+                          <strong>Note:</strong>orderInfo[0].note
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       {ninetyNine ? (
                         <>
                           (<strong style={{ color: "red" }}>Do Not Seal</strong>{" "}
@@ -613,11 +620,11 @@ const HomePage = ({ orders }) => {
                           <strong>Seal</strong> Box!)
                         </>
                       )}
-                      {orderInfo[0].customer.note !== null ? (
+                      {orderInfo[0].note !== null ? (
                         <>
                           <div>-</div>
                           Customer Note:
-                          <p>orderInfo[0].customer.note</p>
+                          <p>{orderInfo[0].note}</p>
                         </>
                       ) : (
                         ""
@@ -652,8 +659,17 @@ const HomePage = ({ orders }) => {
         ""
       )}
 
-      <div style={{ margin: "10px 0 0 20px" }}>
-        <Link href="/order_admin">Admin</Link>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ margin: "10px 0 0 20px" }}>
+          <Button href="/order_admin" onClick={() => switchPage("admin")}>
+            Admin
+          </Button>
+        </div>
+        <div style={{ margin: "10px 20px 0 0" }}>
+          <Button primary href="/order_admin" onClick={switchFullscreen}>
+            {isFullscreen ? "Fullscreen" : "Exit Fullscreen"}
+          </Button>
+        </div>
       </div>
       <div>
         <Page>
@@ -748,5 +764,105 @@ const HomePage = ({ orders }) => {
     </div>
   );
 };
+
+// export default HomePage;
+//            'text',
+//                       'text',
+//                       'text',
+//                       'numeric',
+//                       'numeric',
+//                     ]}
+//                     headings={[
+//                       'Order Number (dynamic)',
+//                       'Name (dynamic)',
+//                       '',
+//                       '',
+//                       'Date (dynamic)',
+//                     ]}
+//                     rows={rows}
+//                     // totals={['', '', '', 255, '$155,830.00']}
+//                   /> */}
+//             {/* </Card>
+//               </div> */}
+//           </Page>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   export default HomePage;
+//              'text',
+//                       'text',
+//                       'text',
+//                       'numeric',
+//                       'numeric',
+//                     ]}
+//                     headings={[
+//                       'Order Number (dynamic)',
+//                       'Name (dynamic)',
+//                       '',
+//                       '',
+//                       'Date (dynamic)',
+//                     ]}
+//                     rows={rows}
+//                     // totals={['', '', '', 255, '$155,830.00']}
+//                   /> */}
+//             {/* </Card>
+//               </div> */}
+//           </Page>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   export default HomePage;
+//              'text',
+//                       'text',
+//                       'text',
+//                       'numeric',
+//                       'numeric',
+//                     ]}
+//                     headings={[
+//                       'Order Number (dynamic)',
+//                       'Name (dynamic)',
+//                       '',
+//                       '',
+//                       'Date (dynamic)',
+//                     ]}
+//                     rows={rows}
+//                     // totals={['', '', '', 255, '$155,830.00']}
+//                   /> */}
+//             {/* </Card>
+//               </div> */}
+//           </Page>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   export default HomePage;
+//              'text',
+//                       'text',
+//                       'text',
+//                       'numeric',
+//                       'numeric',
+//                     ]}
+//                     headings={[
+//                       'Order Number (dynamic)',
+//                       'Name (dynamic)',
+//                       '',
+//                       '',
+//                       'Date (dynamic)',
+//                     ]}
+//                     rows={rows}
+//                     // totals={['', '', '', 255, '$155,830.00']}
+//                   /> */}
+//             {/* </Card>
+//               </div> */}
+//           </Page>
+//         </div>
+//       </div>
+//     );
+//   };
 
 export default HomePage;

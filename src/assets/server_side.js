@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 import mongoConnection from "../assets/mongoConnection.js";
 import mongoose from "mongoose";
 import date from "date-and-time";
@@ -9,6 +9,10 @@ export const admin_data = async () => {
   let admin = await mongoConnection.GetAdmin();
   let orders = await mongoConnection.GetOrders();
   let skippedProducts = await mongoConnection.GetSkipped();
+  console.log("admin:", admin);
+  console.log("orders:", orders);
+  console.log("skippedProducts:", skippedProducts);
+
   return [admin, orders, skippedProducts];
 };
 
@@ -55,11 +59,13 @@ export const remove_products = async (
   // .then((data) => console.log("removed worker(s):", data))
   // .catch((err) => console.log("error removing worker(s):", err));
   let skippedArray = [];
-  skippedProducts.forEach((product) => {
-    if (!skippedArray[parseInt(product.sku)])
-      skippedArray[parseInt(product.sku)] = [];
-    skippedArray[parseInt(product.sku)].push(product);
-  });
+  skippedProducts
+    ? skippedProducts.forEach((product) => {
+        if (!skippedArray[parseInt(product.sku)])
+          skippedArray[parseInt(product.sku)] = [];
+        skippedArray[parseInt(product.sku)].push(product);
+      })
+    : "";
   await mongoConnection
     .RemoveProducts(
       order,
@@ -73,7 +79,7 @@ export const remove_products = async (
 
   if (databaseOnly) return;
 
-  if (skippedProducts.length > 0) noCharge = true;
+  if (skippedProducts && skippedProducts.length > 0) noCharge = true;
 
   // const skippedNames = skippedProducts !== null ? skippedProducts.map(pro => pro.name) : false;
   // const removedNames = removedProducts !== null ? removedProducts.map(pro => pro.name): false;
@@ -116,17 +122,53 @@ export const remove_products = async (
         product.discountedUnitPriceSet.shopMoney.amount
       );
 
+      // OLDDDDD
+
+      // // DEBUG BELOW, then figure out why skipped products didn't get added to the skipped obj in mongo
+      // // let diffrence = priceByUnit * ((parseFloat(fulfilledWeights[i])-(product.variant.weight*parseFloat(product.quantity)))/product.variant.weight);
+      // let diffrence =
+      //   priceByUnit *
+      //   ((parseFloat(fulfilledWeights[product.name]) -
+      //     product.variant.weight * parseFloat(product.quantity)) /
+      //     product.variant.weight);
+
+      // // let fulfilledPrice = priceByUnit * (priceByWeight/product.variant.weight);
+      // console.log("diffrence:", diffrence);
+
+      // totalDiffrence += diffrence;
+
+      // END OLD
+
+      // NEW
       // DEBUG BELOW, then figure out why skipped products didn't get added to the skipped obj in mongo
       // let diffrence = priceByUnit * ((parseFloat(fulfilledWeights[i])-(product.variant.weight*parseFloat(product.quantity)))/product.variant.weight);
-      let diffrence =
-        priceByUnit *
-        ((parseFloat(fulfilledWeights[product.name]) -
-          product.variant.weight * parseFloat(product.quantity)) /
-          product.variant.weight);
 
       // let fulfilledPrice = priceByUnit * (priceByWeight/product.variant.weight);
-      console.log("diffrence:", diffrence);
-      totalDiffrence += diffrence;
+      let diffrence;
+
+      console.log("product:", product);
+      console.log("fulfilledWeights:", fulfilledWeights);
+      console.log("product.variant.id:", product.variant.id);
+      console.log(
+        "fulfilledWeights[product.variant.id]:",
+        fulfilledWeights[product.variant.id]
+      );
+
+      if (fulfilledWeights[product.variant.id]) {
+        console.log("name:", product.name);
+        let pricePerGram =
+          parseFloat(product.discountedUnitPriceSet.shopMoney.amount) /
+          parseFloat(
+            product.name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")
+          );
+        let actualPrice =
+          pricePerGram * parseFloat(fulfilledWeights[product.variant.id]);
+        diffrence =
+          parseFloat(product.discountedTotalSet.shopMoney.amount) - actualPrice;
+
+        totalDiffrence += diffrence;
+      }
+      // END NEW
 
       return product;
     });
@@ -134,7 +176,7 @@ export const remove_products = async (
     return;
   });
 
-  let runningTotal = orderTotal + totalDiffrence;
+  let runningTotal = orderTotal - totalDiffrence;
 
   console.log("runningTotal:", runningTotal);
 
@@ -456,33 +498,36 @@ export const remove_products = async (
 
 export const new_list = async (names) => {
   // GET TOMORROWS DATE, IN FORMAT
-  const getTomorrow = () => {
+  const formatToday = () => {
     Date.prototype.addDays = function (days) {
       var date = new Date(this.valueOf());
       date.setDate(date.getDate() + days);
       return date;
     };
     const aDate = new Date();
-    let dayAfter = aDate.addDays(1);
-    let tomorrow = dayAfter.toLocaleString(undefined, {
+    // let dayAfter = aDate.addDays(1);
+    // let tomorrow = dayAfter.toLocaleString(undefined, {
+    //   timeZone: "Australia/Sydney",
+    // });
+    let today = aDate.toLocaleString(undefined, {
       timeZone: "Australia/Sydney",
     });
-    tomorrow = tomorrow.match(/(.*?)(?=,)/)[0].replace(/\//g, "-");
+    today = today.match(/(.*?)(?=,)/)[0].replace(/\//g, "-");
     let dates = [];
-    tomorrow = tomorrow.replace(/([0-9]*)/g, (theDate) => {
+    today = today.replace(/([0-9]*)/g, (theDate) => {
       if (theDate.length === 1 && theDate !== "") theDate = "0" + theDate;
       if (theDate !== "") dates.push(theDate);
       return theDate;
     });
-    tomorrow = `${dates[1]}-${dates[0]}-${dates[2]}`;
-    // tomorrow = "29-07-2021"; //Hard Code To Test Data
-    return tomorrow;
+    today = `${dates[1]}-${dates[0]}-${dates[2]}`;
+    // today = "29-07-2021"; //Hard Code To Test Data
+    return today;
   };
 
-  // const tomorrow = getTomorrow();
-  const tomorrow = "08-10-2021";
+  const today = formatToday();
+  // const tomorrow = "08-10-2021";
 
-  const gotThemOrders = await LoadOrders(tomorrow, names)
+  const gotThemOrders = await LoadOrders(today, names)
     .then((data) => data)
     .catch((err) => console.log("Error!:", err));
 

@@ -31,6 +31,8 @@ const OrderCard = ({
 
   let hasManyTwos = false;
 
+  console.log("ORDER:", order);
+
   const checkForNotes = () => {
     let hasNine = false;
     let hasTwos = false;
@@ -112,10 +114,11 @@ const OrderCard = ({
       ...document.querySelectorAll(".currentShelfInput" + t + " .weightInput"),
     ];
 
-    let weights = [];
+    let weights = {};
 
     for (let i = 0; i < weightInputs.length; i++) {
-      weights.push(weightInputs[i].value);
+      weights[`${weightInputs[i].dataset.variantid}`] = weightInputs[i].value;
+      // weights.push(weightInputs[i].value);
     }
 
     if (weights.length < 1) return null;
@@ -180,6 +183,14 @@ const OrderCard = ({
             </h2>
           }
         >
+          {order.note ? (
+            <h2 className="anH2" style={{ marginLeft: "20px" }}>
+              <strong>Note:</strong>
+              {order.note}
+            </h2>
+          ) : (
+            ""
+          )}
           {order.lineItems.map((shelf, j) => (
             <div
               className={
@@ -328,7 +339,13 @@ const OrderCard = ({
                     </div> */}
                       <QuantityInput
                         name={product.name}
-                        noWeight={product.sku === "98" ? false : true}
+                        variantId={product.variant.id}
+                        noWeight={
+                          (product.sku !== "88" || product.sku !== "95") &&
+                          product.name.match(/(\()([0-9]*)(g)\)/)
+                            ? false
+                            : true
+                        }
                         noSkip={false}
                         qty={product.quantity}
                         weightUnit="KG"

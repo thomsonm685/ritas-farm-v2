@@ -3,6 +3,8 @@ import { Page, Stack } from "@shopify/polaris";
 // import { Header } from "../components/Header";
 // import { SideNav } from "../components/SideNav";
 import HomePage from "../pages/HomePage";
+import AdminPage from "../pages/AdminPage";
+
 // import { SupportPage } from "../pages/SupportPage";
 // import { SetupPage } from "../pages/SetupPage";
 
@@ -24,14 +26,8 @@ export function Layout({ user, triggerReloadUser }) {
               triggerReloadUser={triggerReloadUser}
               switchPage={switchPage}
             />
-          ) : currentPage === "setup" ? (
-            <SetupPage
-              user={user}
-              triggerReloadUser={triggerReloadUser}
-              switchPage={switchPage}
-            />
-          ) : currentPage === "support" ? (
-            <SupportPage
+          ) : currentPage === "admin" ? (
+            <AdminPage
               user={user}
               triggerReloadUser={triggerReloadUser}
               switchPage={switchPage}

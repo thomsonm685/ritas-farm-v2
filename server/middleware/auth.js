@@ -1,4 +1,5 @@
 import { Shopify } from "@shopify/shopify-api";
+import mongoConnection from "../../src/assets/mongoConnection.js";
 
 import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
@@ -55,6 +56,8 @@ export default function applyAuthMiddleware(app) {
           [session.shop]: session.scope,
         })
       );
+
+      await mongoConnection.AddToken(session.accessToken);
 
       const response = await Shopify.Webhooks.Registry.register({
         shop: session.shop,

@@ -28,7 +28,7 @@ const downloadCsvFunc = async ({ orderData }) => {
         `${order.shippingAddress.name}`.replace(/,/g, ""),
         `${order.customer.phone}`.replace(/,/g, ""),
         `${order.customer.email}`.replace(/,/g, ""),
-        `${order.customer.note}`.replace(/,/g, ""),
+        `${order.note}`.replace(/,/g, ""),
         `${order.shippingAddress.address1}`.replace(/,/g, ""),
         `${order.shippingAddress.address2}`.replace(/,/g, ""),
         `${order.shippingAddress.city}`.replace(/,/g, ""),

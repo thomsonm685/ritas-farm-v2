@@ -14,10 +14,10 @@ import {
   order_data,
   remove_products,
 } from "../src/assets/server_side.js";
-import bodyParser from "koa-bodyparser";
 
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
+import bodyParser from "body-parser";
 
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
@@ -57,6 +57,8 @@ export async function createServer(
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
 
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
   applyAuthMiddleware(app);
 
@@ -88,6 +90,7 @@ export async function createServer(
 
   app.post("(/server_side)", verifyRequest(app), async (req, res) => {
     let theReq = req.body;
+    console.log("theReq", theReq);
     console.log("ctx.request.body:", theReq);
     if (theReq.type === "add") req.body = await add_workers(theReq.names);
     else if (theReq.type === "new list") res.send(await new_list(theReq.names));
