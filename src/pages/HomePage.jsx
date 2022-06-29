@@ -687,10 +687,10 @@ const HomePage = ({ switchPage }) => {
                 <ActionList
                   items={[
                     ...allWorkersInputs,
-                    {
-                      content: "Skipped Orders",
-                      onAction: () => switchWorker("Skipped Orders"),
-                    },
+                    // {
+                    //   content: "Skipped Orders",
+                    //   onAction: () => switchWorker("Skipped Orders"),
+                    // },
                   ]}
                 />
               </Popover>
