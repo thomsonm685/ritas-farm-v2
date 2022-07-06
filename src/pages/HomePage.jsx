@@ -713,6 +713,7 @@ const HomePage = ({ switchPage }) => {
             ))
           ) : currentOrders !== undefined &&
             currentOrders !== null &&
+            currentOrders.orders[0] !== null &&
             currentOrders.orders[0].lineItems[0].image !== null ? (
             currentOrders.orders.map((order, i) => (
               <OrderCard
