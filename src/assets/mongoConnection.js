@@ -187,6 +187,7 @@ mongoConnection.GetAdmin = async () => {
     .findOne({}, function (err, obj) {
       return obj;
     })
+    .clone()
     .then((res) => {
       return res;
     })
@@ -262,6 +263,7 @@ mongoConnection.GetSkipped = async () => {
     .find({}, function (err, obj) {
       return obj;
     })
+    .clone()
     .then((res) => {
       return res;
     })
@@ -507,6 +509,7 @@ mongoConnection.RemoveProducts = async (
 
   let workerOrders = await orderObj
     .findOne({ worker: worker })
+    .clone()
     .catch((err) => console.log("error getting orders:", err));
   // let orderList = await orderObj.findOne({worker:worker})
   //     .catch(err => console.log('error getting orders:', err));

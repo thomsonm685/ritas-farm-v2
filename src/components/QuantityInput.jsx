@@ -26,12 +26,34 @@ const QuantityInput = ({
   const increment = (e) => {
     if (e.target.classList.contains("stepUp")) {
       if (qtyInput === qty) return;
-      if (qtyInput + 1 === qty) setCheckmark("inline-block");
+      console.log("weight:", weight);
       setQtyInput(qtyInput + 1);
+      if (!(parseFloat(weight) > 0)) return;
+      if (qtyInput + 1 === qty) setCheckmark("inline-block");
     } else {
       setCheckmark("none");
       if (qtyInput === 0) return;
       setQtyInput(qtyInput - 1);
+    }
+  };
+
+  const [weight, setWeight] = useState(
+    parseFloat(name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")) /
+      1000
+  );
+
+  const changeWeight = (e) => {
+    console.log("value:", e.target.value);
+    let max =
+      parseFloat(name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")) /
+      1000;
+
+    if (e.target.value <= max) setWeight(e.target.value);
+
+    if (qtyInput === qty && parseFloat(e.target.value) > 0) {
+      setCheckmark("inline-block");
+    } else {
+      setCheckmark("none");
     }
   };
 
@@ -117,12 +139,19 @@ const QuantityInput = ({
         <div className="weightContainer" data-name={name}>
           <span style={{ fontSize: "5rem" }}>{weightUnit}:</span>
           <input
+            value={weight}
+            onChange={changeWeight}
+            max={(
+              parseFloat(
+                name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")
+              ) / 1000
+            ).toString()}
             type="number"
             className="weightInput"
             data-variantId={variantId}
-            defaultValue={name
-              .match(/(\()([0-9]*)(g)\)/)[0]
-              .replace(/\(|\)|g/g, "")}
+            // defaultValue={parseFloat(name
+            //   .match(/(\()([0-9]*)(g)\)/)[0]
+            //   .replace(/\(|\)|g/g, ""))/1000}
           />
         </div>
       ) : (
