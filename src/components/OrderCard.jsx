@@ -23,7 +23,10 @@ const OrderCard = ({
   setManyTwos,
   listName,
 }) => {
-  if (order === undefined) return "";
+  console.log("ORDER:", order);
+
+  if (order === undefined || !order.lineItems[0] || !order.lineItems[0][0])
+    return "";
 
   const [shelfFinished, setShelfFinished] = useState(false);
   const [currentShelf, setCurrentShelf] = useState(order.lineItems[0][0].sku);
