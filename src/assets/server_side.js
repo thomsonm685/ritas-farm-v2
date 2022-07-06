@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import date from "date-and-time";
 import { FulfillAndChargeOrder, LoadOrders } from "../assets/ShopifyGqlReqs.js";
 // import { ProductNames, ProductSkus } from "../assets/ProAndSku.js";
-import { ProductNames, ProductSkus } from "../assets/proAndSku";
+import { ProductNames, ProductSkus } from "../assets/proAndSku.js";
 
 export const admin_data = async () => {
   let admin = await mongoConnection.GetAdmin();
