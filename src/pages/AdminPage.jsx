@@ -456,7 +456,6 @@ const AdminPage = ({ user, switchPage }) => {
                 <div
                   style={{
                     border: "#4fc0e8 2px solid",
-                    borderRadius: "12px",
                     marginTop: "20px",
                     borderRadius: "12px",
                   }}
