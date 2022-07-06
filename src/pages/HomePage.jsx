@@ -121,7 +121,7 @@ const HomePage = ({ switchPage }) => {
       .then(async (data) => {
         const parsedData = await data.json();
         // setAdmin_data(parsedData);
-        console.log(parsedData);
+        console.log("here:", parsedData);
 
         let workersArray = [];
         parsedData.forEach((list) =>
