@@ -74,10 +74,10 @@ export async function createServer(
     }
   });
 
-  app.set(
-    "top-level-oauth-cookie",
-    await mongoConnection.GetAdmin().accessToken
-  );
+  // app.set(
+  //   "top-level-oauth-cookie",
+  //   await mongoConnection.GetAdmin().accessToken
+  // );
 
   // router.get("(/get_orders)", async (ctx) => {
   //   ctx.body = await get_orders();

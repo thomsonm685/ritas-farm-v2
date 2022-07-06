@@ -37,9 +37,9 @@ const skippedProductsSchema = new mongoose.Schema({
 
 function getAdminModel() {
   try {
-    mongoose.model(
-      process.env.NODE_ENV !== "development" ? "Admin" : "Admin_local"
-    ); // it throws an error if the model is still not defined
+    //   mongoose.model(
+    //     process.env.NODE_ENV !== "development" ? "Admin" : "Admin_local"
+    //   ); // it throws an error if the model is still not defined
     return mongoose.model(
       process.env.NODE_ENV !== "development" ? "Admin" : "Admin_local"
     );
@@ -54,9 +54,9 @@ const adminObj = getAdminModel();
 
 function getOrderModel() {
   try {
-    mongoose.model(
-      process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
-    ); // it throws an error if the model is still not defined
+    // mongoose.model(
+    //   process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
+    // ); // it throws an error if the model is still not defined
     return mongoose.model(
       process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
     );
@@ -71,11 +71,11 @@ const orderObj = getOrderModel();
 
 function getSkippedProductModel() {
   try {
-    mongoose.model(
-      process.env.NODE_ENV !== "development"
-        ? "Skipped_Product"
-        : "Skipped_Product_Local"
-    ); // it throws an error if the model is still not defined
+    // mongoose.model(
+    //   process.env.NODE_ENV !== "development"
+    //     ? "Skipped_Product"
+    //     : "Skipped_Product_Local"
+    // ); // it throws an error if the model is still not defined
     return mongoose.model(
       process.env.NODE_ENV !== "development"
         ? "Skipped_Product"
@@ -110,6 +110,7 @@ let mongoConnection = {};
 
 // Method to access token to DB
 mongoConnection.AddToken = async (token) => {
+  console.log("AddToken mongo call");
   // CONNECT TO MONGO
   mongoose
     .connect(
@@ -126,7 +127,7 @@ mongoConnection.AddToken = async (token) => {
   // Checking if store obj already exists (unless this is their first edit, it should)
   // console.log("process.env.NEXT_PUBLIC_SHOP (from addToDB)", process.env.NEXT_PUBLIC_SHOP);
   console.log("adminObj", adminObj);
-  console.log("adminObj.find:", await adminObj.findOne({}));
+  // console.log("adminObj.find:", await adminObj.findOne({}));
   // let storeEdits = await adminObj.findOne({})
   //     .then(res => {
   //         return res
@@ -155,6 +156,7 @@ mongoConnection.AddToken = async (token) => {
 };
 
 mongoConnection.GetAdmin = async () => {
+  console.log("GetAdmin mongo call");
   // CONNECT TO MONGO
   mongoose
     .connect(
@@ -171,7 +173,7 @@ mongoConnection.GetAdmin = async () => {
   // Checking if store obj already exists (unless this is their first edit, it should)
   // console.log("process.env.NEXT_PUBLIC_SHOP (from addToDB)", process.env.NEXT_PUBLIC_SHOP);
   console.log("adminObj", adminObj);
-  console.log("adminObj.find:", await adminObj.findOne({}));
+  // console.log("adminObj.find:", await adminObj.findOne({}));
   // let storeEdits = await adminObj.findOne({})
   //     .then(res => {
   //         return res
@@ -197,6 +199,7 @@ mongoConnection.GetAdmin = async () => {
 
 mongoConnection.GetOrders = async () => {
   // CONNECT TO MONGO
+  console.log("GetOrders mongo call");
   mongoose
     .connect(
       "mongodb+srv://order_manager:tzGqrqT0NOySMA8e@cluster0.xpee6.mongodb.net/order_manager?retryWrites=true&w=majority",
@@ -209,10 +212,12 @@ mongoConnection.GetOrders = async () => {
       console.log("mongoose -> MongoDB Connection Error :", err);
     });
 
+  console.log("here before");
+
   // Checking if store obj already exists (unless this is their first edit, it should)
   // console.log("process.env.NEXT_PUBLIC_SHOP (from addToDB)", process.env.NEXT_PUBLIC_SHOP);
-  console.log("adminObj", adminObj);
-  console.log("adminObj.find:", await orderObj.find({}));
+  // console.log("adminObj", adminObj);
+  // console.log("adminObj.find:", await orderObj.find({}));
   // let storeEdits = await adminObj.findOne({})
   //     .then(res => {
   //         return res
@@ -226,17 +231,20 @@ mongoConnection.GetOrders = async () => {
     .find({}, function (err, obj) {
       return obj;
     })
-    .then((res) => {
-      return res;
-    })
+    .clone()
+    // .then((res) => {
+    //   return res;
+    // })
     .catch((err) => {
       console.log("Error  in mongoConnection:", err);
       return err;
     });
+  console.log("here guys");
   return theOrders;
 };
 
 mongoConnection.GetSkipped = async () => {
+  console.log("GetSkipped mongo call");
   // CONNECT TO MONGO
   mongoose
     .connect(

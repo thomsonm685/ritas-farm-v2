@@ -22,16 +22,16 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [reloadUser, triggerReloadUser] = useState(false);
 
-  useEffect(() => {
-    // let shop = new URLSearchParams(window.location.search).get("shop");
-    // fetch(`/user?shop=${shop}`, { redirect: "follow" }).then((user) => {
-    //   user = user.json().then((data) => {
-    //     console.log("USER AH:", data);
-    //     // if(data.status === 302) window.location.href=window.location.href.replace('/?', '/auth/?');
-    //     setUser(data);
-    //   });
-    // });
-  }, [reloadUser]);
+  // useEffect(() => {
+  //   let shop = new URLSearchParams(window.location.search).get("shop");
+  //   fetch(`/user?shop=${shop}`, { redirect: "follow" }).then((user) => {
+  //     user = user.json().then((data) => {
+  //       console.log("USER AH:", data);
+  //       // if(data.status === 302) window.location.href=window.location.href.replace('/?', '/auth/?');
+  //       setUser(data);
+  //     });
+  //   });
+  // }, [reloadUser]);
 
   return (
     <PolarisProvider i18n={translations}>
