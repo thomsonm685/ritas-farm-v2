@@ -338,6 +338,7 @@ const OrderCard = ({
                       </span>
                     </div> */}
                       <QuantityInput
+                        product={product}
                         name={product.name}
                         variantId={product.variant.id}
                         noWeight={

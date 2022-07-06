@@ -148,14 +148,14 @@ export const remove_products = async (
 
       if (fulfilledWeights[product.variant.id]) {
         console.log("name:", product.name);
-        let pricePerGram = // weight is in KG, converting to grams
+        let pricePerGram =
           parseFloat(product.discountedUnitPriceSet.shopMoney.amount) /
-          (parseFloat(
+          parseFloat(
             product.name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")
-          ) *
-            1000);
+          );
         let actualPrice =
-          pricePerGram * parseFloat(fulfilledWeights[product.variant.id]);
+          pricePerGram *
+          parseFloat(fulfilledWeights[product.variant.id] * 1000);
         diffrence =
           parseFloat(product.discountedTotalSet.shopMoney.amount) - actualPrice;
 

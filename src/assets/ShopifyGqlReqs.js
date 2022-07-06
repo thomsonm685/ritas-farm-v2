@@ -350,57 +350,59 @@ export const FulfillAndChargeOrder = async (
   // myHeaders.append("X-Shopify-Access-Token", token);
   // myHeaders.append("Content-Type", "application/json");
 
-  var graphql = JSON.stringify({
-    query:
-      `
-      mutation {
-        fulfillmentCreateV2(fulfillment: 
-        {
-            lineItemsByFulfillmentOrder
-            {
-              fulfillmentOrderId:"${order.fulfillments[0].id}"
-            },   
-            notifyCustomer:true
-        }
-        ) 
-        {
-            userErrors {
-                field
-                message
-            }
-        }
-      }
-      ` + !noCharge
-        ? `
-      mutation orderCapture {
-        orderCapture(
-            input: 
-            {                        
-                amount: "${chargeAmount}",                            
-                id: "${order.id}",                            
-                parentTransactionId: "${
-                  order.transactions[order.transactions.length - 1].id
-                }",                     
-            }
-        ) 
-        {
-            userErrors {
-                field
-                message
-            }
-        }
-    }
-    `
-        : ``,
-    variables: {},
-  });
+  // var graphql = JSON.stringify({
+  //   query:
+  //     `
+  //     mutation {
+  //       fulfillmentCreateV2(fulfillment:
+  //       {
+  //           lineItemsByFulfillmentOrder
+  //           {
+  //             fulfillmentOrderId:"${order.fulfillments[0].id}"
+  //           },
+  //           notifyCustomer:true
+  //       }
+  //       )
+  //       {
+  //           userErrors {
+  //               field
+  //               message
+  //           }
+  //       }
+  //     }
+  //     ` + !noCharge
+  //       ? `
+  //     mutation orderCapture {
+  //       orderCapture(
+  //           input:
+  //           {
+  //               amount: "${chargeAmount}",
+  //               id: "${order.id}",
+  //               parentTransactionId: "${
+  //                 order.transactions[order.transactions.length - 1].id
+  //               }",
+  //           }
+  //       )
+  //       {
+  //           userErrors {
+  //               field
+  //               message
+  //           }
+  //       }
+  //   }
+  //   `
+  //       : ``,
+  //   variables: {},
+  // });
 
-  const graphqlQuery = {
+  console.log("order.fulfillments[0].id:", order.fulfillments[0].id);
+
+  let graphqlQuery = {
     query:
       ` mutation {
       fulfillmentCreateV2(fulfillment: 
       {
-          lineItemsByFulfillmentOrder
+          lineItemsByFulfillmentOrder:
           {
             fulfillmentOrderId:"${order.fulfillments[0].id}"
           },   
@@ -460,7 +462,7 @@ export const FulfillAndChargeOrder = async (
   //     console.log(response.status);
   //     console.log(response.headers);
   //   })
-  const fufilledOrder = await axios({
+  const chargedOrder = await axios({
     url: `https://${process.env.SHOP}/admin/api/2021-10/graphql.json`,
     method: "post",
     headers: {
@@ -478,6 +480,47 @@ export const FulfillAndChargeOrder = async (
       console.log(response.status);
       console.log(response.headers);
     });
+
+  graphqlQuery = {
+    query: ` mutation {
+        fulfillmentCreateV2(fulfillment: 
+        {
+            lineItemsByFulfillmentOrder:
+            {
+              fulfillmentOrderId:"${order.fulfillments[0].id}"
+            },   
+            notifyCustomer:true
+        }
+        ) 
+        {
+            userErrors {
+                field
+                message
+            }
+        }
+      }
+      `,
+    variables: {},
+  };
+
+  const fufilledOrder = await axios({
+    url: `https://${process.env.SHOP}/admin/api/2021-10/graphql.json`,
+    method: "post",
+    headers: {
+      "X-Shopify-Access-Token": token,
+      "Content-Type": "application/json",
+    },
+    data: graphqlQuery,
+  })
+    .then((response) => {
+      console.log("result", response.data);
+    })
+    .catch(({ response }) => {
+      console.log(response.data);
+      console.log(response.status);
+      console.log(response.headers);
+    });
+
   return fufilledOrder;
 };
 

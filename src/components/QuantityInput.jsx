@@ -120,6 +120,9 @@ const QuantityInput = ({
             type="number"
             className="weightInput"
             data-variantId={variantId}
+            defaultValue={name
+              .match(/(\()([0-9]*)(g)\)/)[0]
+              .replace(/\(|\)|g/g, "")}
           />
         </div>
       ) : (

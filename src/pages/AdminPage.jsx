@@ -319,7 +319,7 @@ const AdminPage = ({ user, switchPage }) => {
       ) : (
         <div>
           <div style={{ margin: "10px 0 0 20px" }}>
-            <Button onClick={() => switchPage("home")}>Admin</Button>
+            <Button onClick={() => switchPage("home")}>Lists</Button>
           </div>
           <div>
             <Frame>
