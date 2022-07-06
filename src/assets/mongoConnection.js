@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { order_data } from "../assets/server_side.js";
-import dateFormat from "date-format";
 
 const adminSchema = new mongoose.Schema({
   accessToken: String,
