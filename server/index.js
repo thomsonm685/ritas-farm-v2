@@ -93,8 +93,11 @@ export async function createServer(
     console.log("theReq", theReq);
     console.log("ctx.request.body:", theReq);
     if (theReq.type === "add") req.body = await add_workers(theReq.names);
-    else if (theReq.type === "new list") res.send(await new_list(theReq.names));
-    else if (theReq.type === "remove")
+    else if (theReq.type === "new list") {
+      const newList = await new_list(theReq.names, theReq.tags, theReq.dates);
+      if (newList) res.send(200);
+      if (!newList) res.status(403);
+    } else if (theReq.type === "remove")
       res.send(await remove_workers(theReq.names));
     else if (theReq.type === "remove products")
       res.send(

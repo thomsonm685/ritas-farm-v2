@@ -2,10 +2,10 @@ import {
   Page,
   ResourceList,
   Modal,
-  Collapsible,
+  Tag,
   Avatar,
-  TextStyle,
-  ResourceItem,
+  DatePicker,
+  Stack,
   Card,
   TextContainer,
   SkeletonPage,
@@ -26,6 +26,7 @@ import { AddMajor } from "@shopify/polaris-icons";
 import mongoConnection from "../assets/mongoConnection";
 import CollapsibleTab from "../components/CollapsibleTab";
 import GetCsv from "../components/GetCsv";
+import GetLocateCsv from "../components/GetLocateCsv";
 import GetSkippedCsv from "../components/GetSkippedCsv";
 import GetSku1Csv from "../components/GetSku1Csv";
 import GetSku2Csv from "../components/GetSku2Csv";
@@ -89,7 +90,7 @@ const AdminPage = ({ user, switchPage }) => {
   const [skipped_data, setSkipped_Data] = useState(null);
   const [allWorkersInputs, setAllWorkersInputs] = useState(null);
   const [modalActive, setModalActive] = useState(true);
-  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("Ritasfarm");
   const password = "Ritasfarm";
   // const [expanded, setExpanded] = useState(false);
 
@@ -126,6 +127,104 @@ const AdminPage = ({ user, switchPage }) => {
     []
   );
 
+  // CALENDER LOGIC
+  Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  };
+
+  let now = new Date();
+  let ausNow = new Date(
+    now.toLocaleString(undefined, { timeZone: "Australia/Sydney" })
+  );
+
+  const [{ month, year }, setDate] = useState({
+    month: ausNow.getMonth(),
+    year: ausNow.getFullYear(),
+  });
+  const [selectedDates, setSelectedDates] = useState({
+    start: new Date(ausNow),
+    end: new Date(""),
+  });
+
+  const handleMonthChange = useCallback(
+    (month, year) => setDate({ month, year }),
+    []
+  );
+
+  const formatDate = (theDate) => {
+    theDate = new Date(theDate).toLocaleString();
+    theDate = theDate.match(/(.*?)(?=,)/)[0].replace(/\//g, "-");
+    let dates = [];
+    theDate = theDate.replace(/([0-9]*)/g, (theDate) => {
+      if (theDate.length === 1 && theDate !== "") theDate = "0" + theDate;
+      if (theDate !== "") dates.push(theDate);
+      return theDate;
+    });
+    theDate = `${dates[1]}-${dates[0]}-${dates[2]}`;
+    return theDate;
+  };
+
+  const getDateTags = () => {
+    const dates = [];
+
+    if (
+      !(selectedDates.start instanceof Date && !isNaN(selectedDates.end)) ||
+      selectedDates.start === selectedDates.end
+    ) {
+      console.log("date:", formatDate(new Date(selectedDates.start)));
+      dates.push(formatDate(new Date(selectedDates.start)));
+      return dates;
+    }
+    let thisDate = new Date(selectedDates.start);
+    let endDate = new Date(selectedDates.end);
+    while (thisDate <= endDate) {
+      console.log(thisDate);
+      dates.push(formatDate(thisDate));
+      thisDate = thisDate.addDays(1);
+    }
+    console.log("dates:", dates);
+    return dates;
+  };
+
+  // END CALENDER LOGIC
+
+  // TAG INPUT LOGIC
+  const [textFieldValue, setTextFieldValue] = useState("");
+  const handleTextFieldChange = useCallback(
+    (value) => setTextFieldValue(value),
+    []
+  );
+
+  const addTag = () => {
+    console.log("this:", selectedDates);
+    getDateTags();
+    if (textFieldValue === "" || textFieldValue.match(/ /g)) return;
+    setSelectedTags([...selectedTags, textFieldValue]);
+    setTextFieldValue("");
+  };
+
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const removeTag = useCallback(
+    (tag) => () => {
+      setSelectedTags((previousTags) =>
+        previousTags.filter((previousTag) => previousTag !== tag)
+      );
+    },
+    []
+  );
+
+  const tagMarkup = selectedTags.map((option) => (
+    <span style={{ margin: "0 5px" }}>
+      <Tag key={option} onRemove={removeTag(option)}>
+        {option}
+      </Tag>
+    </span>
+  ));
+  // END TAG INPUT LOGIC
+
   async function fetchAdminData() {
     await fetch("/server_side?data=admin")
       .then(async (data) => {
@@ -159,19 +258,25 @@ const AdminPage = ({ user, switchPage }) => {
 
   const newList = async (names) => {
     toggleActiveToast();
+    console.log("right before:", getDateTags());
     await fetch("/server_side", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify({ names, type: "new list" }), // body data type must match "Content-Type" header
+      body: JSON.stringify({
+        names,
+        type: "new list",
+        tags: selectedTags,
+        dates: getDateTags(),
+      }), // body data type must match "Content-Type" header
     })
       .then(async (res) => {
         // res = await data.text();
-        console.log("dataTEXT:", res);
+        console.log("status:", res.status);
         console.log("that was dataTEXT");
-        return res;
+        return res.status;
       })
       .catch((err) => {
         console.log("err1:", err);
@@ -369,7 +474,7 @@ const AdminPage = ({ user, switchPage }) => {
                   }}
                 >
                   <Card title="Create New Lists">
-                    <div style={{ padding: "25px 0" }}>
+                    <div style={{ padding: "25px" }}>
                       {/* <div className="rowBorder" style={{display:'flex', paddingLeft:'12px'}}> 
                         <h1 style={{fontSize:"2.6rem", fontWeight:"600", lineHeight:"3rem", display:'inline-block', paddingLeft:"10px", marginBottom: '10px'}}>Working Lists</h1>
                         </div>
@@ -383,6 +488,26 @@ const AdminPage = ({ user, switchPage }) => {
                                 <Icon source={AddMajor} color="base" />
                             </span>
                         </div> */}
+                      <DatePicker
+                        month={month}
+                        year={year}
+                        onChange={setSelectedDates}
+                        onMonthChange={handleMonthChange}
+                        selected={selectedDates}
+                        allowRange
+                      />
+
+                      <TextField
+                        label="Add Tag"
+                        type="text"
+                        value={textFieldValue}
+                        onChange={handleTextFieldChange}
+                        autoComplete="off"
+                        connectedRight={<Button onClick={addTag}>Add</Button>}
+                      />
+
+                      <div style={{ margin: "10px" }}>{tagMarkup}</div>
+
                       <OptionList
                         title="Who's working?"
                         onChange={setAddingWorkers}
@@ -511,6 +636,7 @@ const AdminPage = ({ user, switchPage }) => {
                           <GetSku1Csv orderData={order_data} />
                           <GetSku2Csv orderData={order_data} />
                           <GetSkippedCsv products={skipped_data} />
+                          <GetLocateCsv orderData={order_data} />
                         </div>
                       </>
                     ) : (

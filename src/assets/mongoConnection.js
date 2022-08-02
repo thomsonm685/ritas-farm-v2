@@ -58,11 +58,13 @@ function getOrderModel() {
     //   process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
     // ); // it throws an error if the model is still not defined
     return mongoose.model(
-      process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
+      "Order"
+      // process.env.NODE_ENV !== "development" ? "Order" : "Order_local"
     );
   } catch (e) {
     return mongoose.model(
-      process.env.NODE_ENV !== "development" ? "Order" : "Order_local",
+      "Order",
+      // process.env.NODE_ENV !== "development" ? "Order" : "Order_local",
       orderSchema
     );
   }
@@ -77,15 +79,17 @@ function getSkippedProductModel() {
     //     : "Skipped_Product_Local"
     // ); // it throws an error if the model is still not defined
     return mongoose.model(
-      process.env.NODE_ENV !== "development"
-        ? "Skipped_Product"
-        : "Skipped_Product_Local"
+      // process.env.NODE_ENV !== "development"
+      //   ? "Skipped_Product"
+      //   : "Skipped_Product_Local"
+      "Skipped_Product"
     );
   } catch (e) {
     return mongoose.model(
-      process.env.NODE_ENV !== "development"
-        ? "Skipped_Product"
-        : "Skipped_Product_Local",
+      // process.env.NODE_ENV !== "development"
+      //   ? "Skipped_Product"
+      //   : "Skipped_Product_Local",
+      "Skipped_Product",
       skippedProductsSchema
     );
   }
@@ -240,7 +244,7 @@ mongoConnection.GetOrders = async () => {
       console.log("Error  in mongoConnection:", err);
       return err;
     });
-  console.log("here guys");
+  console.log("here guys orders:", theOrders);
   return theOrders;
 };
 

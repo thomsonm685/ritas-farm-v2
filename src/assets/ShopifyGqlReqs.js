@@ -1,7 +1,8 @@
 import mongoConnection from "../assets/mongoConnection.js";
 import axios from "axios";
+import { bulkOrders } from "../../server/GQL/mutations.js";
 
-export const LoadOrders = async (date, names) => {
+export const LoadOrders = async (names, dates, tags) => {
   console.log("inside the Load ORders Function!");
 
   const newList = await mongoConnection
@@ -14,7 +15,10 @@ export const LoadOrders = async (date, names) => {
   console.log("node_env:", process.env.NODE_ENV);
   let token = adminObj.accessToken;
 
-  console.log("date:", date);
+  console.log("dates:", dates);
+  console.log("tags:", tags);
+
+  // console.log("date:", date);
 
   // var graphql = JSON.stringify({
   //   query: `
@@ -127,11 +131,19 @@ export const LoadOrders = async (date, names) => {
   //     console.log(response.status);
   //     console.log(response.headers);
   // })
+  let allTagsQuery = "";
+  [...dates, ...tags].forEach((tag, i) => {
+    if (i === 0) allTagsQuery = tag;
+    else allTagsQuery += " AND tag:" + tag;
+  });
 
+  // await bulkOrders(process.env.SHOP, token, allTagsQuery);
+
+  console.log("allTagsQuery:", allTagsQuery);
   var data = JSON.stringify({
     query:
       '\n    mutation {\n      bulkOperationRunQuery(\n          query:""" \n          {orders(first:10000,  query:"tag:' +
-      date +
+      allTagsQuery +
       ' AND fulfillment_status:unfulfilled")  {\n            edges {\n                node {\n                   currentTotalPriceSet{\n                        presentmentMoney{\n                          amount\n                      }\n                    }\n                    transactions{\n                      id\n                    }\n                    app{\n                      name\n                    }\n                    note\n   createdAt\n                    tags\n                    totalWeight\n                    shippingAddress {\n                        name\n                        address1\n                        address2\n                        city\n                        province\n                        zip\n                    } \n                    customer {\n                    note\n                    phone\n                    email\n                    }\n                    lineItems(first: 1000) {\n                    edges {\n                        node {\n                        discountedTotalSet{\n                          shopMoney{\n                            amount\n                          }\n                        }\n                        image {\n                            src\n                        }\n                        name\n                        quantity\n                        sku\n                        variant {\n                            id\n                        }\n                        discountedUnitPriceSet{\n                        shopMoney{\n                          amount\n                        }\n                        }\n                        variant{\n                            weight\n                            weightUnit\n                        }\n                    }\n                    }\n                    }\n                    name\n                    id\n                    fulfillmentOrders(first:1){\n                      edges{\n                        node{\n                          id\n                        }\n                      }\n                    }\n                }\n            }\n        }\n    }"""\n      ) {\n      bulkOperation {\n          id\n          status\n      }\n      userErrors {\n          field\n          message\n      }\n      }\n  }',
     variables: {},
   });
@@ -399,7 +411,7 @@ export const FulfillAndChargeOrder = async (
 
   let graphqlQuery = {
     query:
-      ` mutation {
+      ` mutation fulfillmentCreateV2 {
       fulfillmentCreateV2(fulfillment: 
       {
           lineItemsByFulfillmentOrder:
@@ -452,7 +464,7 @@ export const FulfillAndChargeOrder = async (
 
   console.log("graphql 1");
 
-  // const fufilledOrder = await axios.post(
+  // const fulfilledOrder = await axios.post(
   //   `https://${process.env.SHOP}/admin/api/2021-10/graphql.json`,
   //   requestOptions
   // )
@@ -473,6 +485,7 @@ export const FulfillAndChargeOrder = async (
   })
     .then((response) => {
       console.log("result", response.data);
+      console.log("fulfilled?:", response.data);
       console.log("errors:", response.data.data.orderCapture.userErrors);
     })
     .catch(({ response }) => {
@@ -480,6 +493,8 @@ export const FulfillAndChargeOrder = async (
       console.log(response.status);
       console.log(response.headers);
     });
+
+  // HERE TO END
 
   graphqlQuery = {
     query: ` mutation {
@@ -513,7 +528,7 @@ export const FulfillAndChargeOrder = async (
     data: graphqlQuery,
   })
     .then((response) => {
-      console.log("result", response.data);
+      console.log("fulfillent result", response.data);
     })
     .catch(({ response }) => {
       console.log(response.data);

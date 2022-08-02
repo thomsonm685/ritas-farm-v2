@@ -23,10 +23,7 @@ const OrderCard = ({
   setManyTwos,
   listName,
 }) => {
-  console.log("ORDER:", order);
-
-  if (order === undefined || !order.lineItems[0] || !order.lineItems[0][0])
-    return "";
+  if (order === undefined) return "";
 
   const [shelfFinished, setShelfFinished] = useState(false);
   const [currentShelf, setCurrentShelf] = useState(order.lineItems[0][0].sku);
@@ -346,7 +343,7 @@ const OrderCard = ({
                         variantId={product.variant.id}
                         noWeight={
                           (product.sku !== "88" || product.sku !== "95") &&
-                          product.name.match(/(\()([0-9]*)(g)\)/)
+                          product.name.match(/([0-9]+g)/)
                             ? false
                             : true
                         }

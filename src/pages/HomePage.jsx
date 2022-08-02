@@ -121,7 +121,7 @@ const HomePage = ({ switchPage }) => {
       .then(async (data) => {
         const parsedData = await data.json();
         // setAdmin_data(parsedData);
-        console.log("here:", parsedData);
+        console.log(parsedData);
 
         let workersArray = [];
         parsedData.forEach((list) =>
@@ -132,8 +132,11 @@ const HomePage = ({ switchPage }) => {
         );
         setAllWorkersInputs(workersArray);
 
-        listName === "" ? setListName(parsedData[0].worker) : "";
-        let tempName = listName === "" ? parsedData[0].worker : listName;
+        listName === "" && parsedData[0]
+          ? setListName(parsedData[0].worker)
+          : "";
+        let tempName =
+          listName === "" && parsedData[0] ? parsedData[0].worker : listName;
 
         let noOrders =
           parsedData.filter((orderList) => orderList.worker === tempName)[0]
@@ -713,10 +716,6 @@ const HomePage = ({ switchPage }) => {
             ))
           ) : currentOrders !== undefined &&
             currentOrders !== null &&
-            currentOrders.orders !== null &&
-            currentOrders.orders[0] !== null &&
-            currentOrders.orders[0].lineItems !== null &&
-            currentOrders.orders[0].lineItems[0] !== null &&
             currentOrders.orders[0].lineItems[0].image !== null ? (
             currentOrders.orders.map((order, i) => (
               <OrderCard

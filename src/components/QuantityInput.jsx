@@ -28,7 +28,7 @@ const QuantityInput = ({
       if (qtyInput === qty) return;
       console.log("weight:", weight);
       setQtyInput(qtyInput + 1);
-      if (!(parseFloat(weight) > 0)) return;
+      if (!noWeight && !(parseFloat(weight) > 0)) return;
       if (qtyInput + 1 === qty) setCheckmark("inline-block");
     } else {
       setCheckmark("none");
@@ -38,15 +38,18 @@ const QuantityInput = ({
   };
 
   const [weight, setWeight] = useState(
-    parseFloat(name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")) /
-      1000
+    name.match(/([0-9]+g)/)
+      ? (parseFloat(name.match(/([0-9]+g)/)[0].replace(/\(|\)|g/g, "")) /
+          1000) *
+          qty
+      : null
   );
 
   const changeWeight = (e) => {
     console.log("value:", e.target.value);
     let max =
-      parseFloat(name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")) /
-      1000;
+      (parseFloat(name.match(/([0-9]+g)/)[0].replace(/\(|\)|g/g, "")) / 1000) *
+      qty;
 
     if (e.target.value <= max) setWeight(e.target.value);
 
@@ -142,15 +145,15 @@ const QuantityInput = ({
             value={weight}
             onChange={changeWeight}
             max={(
-              parseFloat(
-                name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")
-              ) / 1000
+              (parseFloat(name.match(/([0-9]+g)/)[0].replace(/\(|\)|g/g, "")) /
+                1000) *
+              qty
             ).toString()}
             type="number"
             className="weightInput"
-            data-variantId={variantId}
+            data-variantid={variantId}
             // defaultValue={parseFloat(name
-            //   .match(/(\()([0-9]*)(g)\)/)[0]
+            //   .match(/([0-9]+g)/)[0]
             //   .replace(/\(|\)|g/g, ""))/1000}
           />
         </div>

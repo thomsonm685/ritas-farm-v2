@@ -152,7 +152,7 @@ export const remove_products = async (
         let pricePerGram =
           parseFloat(product.discountedUnitPriceSet.shopMoney.amount) /
           parseFloat(
-            product.name.match(/(\()([0-9]*)(g)\)/)[0].replace(/\(|\)|g/g, "")
+            product.name.match(/([0-9]+g)/)[0].replace(/\(|\)|g/g, "")
           );
         let actualPrice =
           pricePerGram *
@@ -490,44 +490,44 @@ export const remove_products = async (
 
 // };
 
-export const new_list = async (names) => {
+export const new_list = async (names, tags, dates) => {
   // GET TOMORROWS DATE, IN FORMAT
-  const formatToday = () => {
-    Date.prototype.addDays = function (days) {
-      var date = new Date(this.valueOf());
-      date.setDate(date.getDate() + days);
-      return date;
-    };
-    const aDate = new Date();
-    // let dayAfter = aDate.addDays(1);
-    // let tomorrow = dayAfter.toLocaleString(undefined, {
-    //   timeZone: "Australia/Sydney",
-    // });
-    let today = aDate.toLocaleString(undefined, {
-      timeZone: "Australia/Sydney",
-    });
-    today = today.match(/(.*?)(?=,)/)[0].replace(/\//g, "-");
-    let dates = [];
-    today = today.replace(/([0-9]*)/g, (theDate) => {
-      if (theDate.length === 1 && theDate !== "") theDate = "0" + theDate;
-      if (theDate !== "") dates.push(theDate);
-      return theDate;
-    });
-    today = `${dates[1]}-${dates[0]}-${dates[2]}`;
-    // today = "29-07-2021"; //Hard Code To Test Data
-    return today;
-  };
+  // const formatToday = () => {
+  //   Date.prototype.addDays = function (days) {
+  //     var date = new Date(this.valueOf());
+  //     date.setDate(date.getDate() + days);
+  //     return date;
+  //   };
+  //   const aDate = new Date();
+  //   // let dayAfter = aDate.addDays(1);
+  //   // let tomorrow = dayAfter.toLocaleString(undefined, {
+  //   //   timeZone: "Australia/Sydney",
+  //   // });
+  //   let today = aDate.toLocaleString(undefined, {
+  //     timeZone: "Australia/Sydney",
+  //   });
+  //   today = today.match(/(.*?)(?=,)/)[0].replace(/\//g, "-");
+  //   let dates = [];
+  //   today = today.replace(/([0-9]*)/g, (theDate) => {
+  //     if (theDate.length === 1 && theDate !== "") theDate = "0" + theDate;
+  //     if (theDate !== "") dates.push(theDate);
+  //     return theDate;
+  //   });
+  //   today = `${dates[1]}-${dates[0]}-${dates[2]}`;
+  //   // today = "29-07-2021"; //Hard Code To Test Data
+  //   return today;
+  // };
 
-  const today = formatToday();
+  // const today = formatToday();
   // const tomorrow = "08-10-2021";
 
-  const gotThemOrders = await LoadOrders(today, names)
+  const gotThemOrders = await LoadOrders(names, dates, tags)
     .then((data) => data)
     .catch((err) => console.log("Error!:", err));
 
   // array to catch any jsonl data that comes before it's parent data
   // let sortLater = [];
-
+  if (!gotThemOrders) return false;
   // Function to put data to it's parent data and create new array of parsed orders
   let parsedOrders = gotThemOrders.reduce((sortedArray, currentData) => {
     // if it's a parent, push to new sorted array
