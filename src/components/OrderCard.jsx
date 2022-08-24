@@ -74,7 +74,7 @@ const OrderCard = ({
       if (theInput.classList.contains("skippedProduct")) {
         skippedProducts.push({
           number: order.name,
-          name: order.shippingAddress.name,
+          name: order.shippingAddress ? order.shippingAddress.name : "",
           product: theInput.getAttribute("data-item"),
           quantity: theInput.getAttribute("data-qty"),
         });
@@ -98,7 +98,7 @@ const OrderCard = ({
       if (theInput.classList.contains("removedProduct")) {
         removedProducts.push({
           number: order.name,
-          name: order.shippingAddress.name,
+          name: order.shippingAddress ? order.shippingAddress.name : "",
           product: theInput.getAttribute("data-item"),
           quantity: theInput.getAttribute("data-qty"),
         });

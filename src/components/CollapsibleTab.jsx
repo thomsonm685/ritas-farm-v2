@@ -24,9 +24,7 @@ const CollapsibleTab = ({ worker, orders }) => {
   orders.forEach((order) => {
     rows.push([
       order.name,
-      order.shippingAddress !== undefined
-        ? order.shippingAddress.name
-        : "A Name",
+      order.shippingAddress ? order.shippingAddress.name : "No Name",
     ]);
   });
 

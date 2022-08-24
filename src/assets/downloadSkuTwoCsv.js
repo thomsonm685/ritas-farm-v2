@@ -26,15 +26,30 @@ const downloadSkuTwoCsv = async ({ orderData }) => {
       rows.push([
         `RFP-HD-${order.name.slice(1)}`.replace(/,/g, ""),
         `RFP-HD-${order.name.slice(1)}-1`.replace(/,/g, ""),
-        `${order.shippingAddress.name}`.replace(/,/g, ""),
+        `${order.shippingAddress ? order.shippingAddress.name : ""}`.replace(
+          /,/g,
+          ""
+        ),
         `${order.customer.phone}`.replace(/,/g, ""),
         `${order.customer.email}`.replace(/,/g, ""),
         `${order.note}`.replace(/,/g, ""),
-        `${order.shippingAddress.address1}`.replace(/,/g, ""),
-        `${order.shippingAddress.address2}`.replace(/,/g, ""),
-        `${order.shippingAddress.city}`.replace(/,/g, ""),
-        `${order.shippingAddress.province}`.replace(/,/g, ""),
-        `${order.shippingAddress.zip}`.replace(/,/g, ""),
+        `${
+          order.shippingAddress ? order.shippingAddress.address1 : ""
+        }`.replace(/,/g, ""),
+        `${
+          order.shippingAddress ? order.shippingAddress.address2 : ""
+        }`.replace(/,/g, ""),
+        `${order.shippingAddress ? order.shippingAddress.city : ""}`.replace(
+          /,/g,
+          ""
+        ),
+        `${
+          order.shippingAddress ? order.shippingAddress.province : ""
+        }`.replace(/,/g, ""),
+        `${order.shippingAddress ? order.shippingAddress.zip : ""}`.replace(
+          /,/g,
+          ""
+        ),
         // Time_window_start       UNADDED!!!
         // Time_window_end         UNADDED!!!
         // Type	                   UNADDED!!!

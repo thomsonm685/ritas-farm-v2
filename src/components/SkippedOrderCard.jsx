@@ -97,7 +97,9 @@ const OrderCard = ({
       if (theInput.classList.contains("removedProduct")) {
         removedProducts.push({
           number: order.parentOrder.name,
-          name: order.parentOrder.shippingAddress.name,
+          name: order.parentOrder.shippingAddress
+            ? order.parentOrder.shippingAddress.name
+            : "",
           product: theInput.getAttribute("data-item"),
           quantity: theInput.getAttribute("data-qty"),
         });
@@ -180,7 +182,9 @@ const OrderCard = ({
           title={
             <h2 className="anH2">
               Order: {order.parentOrder.name}, Customer:{" "}
-              {order.parentOrder.shippingAddress.name}
+              {order.parentOrder.shippingAddress
+                ? order.parentOrder.shippingAddress.name
+                : ""}
             </h2>
           }
         >
