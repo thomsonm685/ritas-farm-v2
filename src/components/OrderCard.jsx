@@ -179,7 +179,8 @@ const OrderCard = ({
         <Card
           title={
             <h2 className="anH2">
-              Order: {order.name}, Customer: {order.shippingAddress.name}
+              Order: {order.name}, Customer:{" "}
+              {order.shippingAddress ? order.shippingAddress.name : ""}
             </h2>
           }
         >
