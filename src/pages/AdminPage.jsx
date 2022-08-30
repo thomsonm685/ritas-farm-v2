@@ -140,9 +140,13 @@ const AdminPage = ({ user, switchPage }) => {
   );
 
   const [{ month, year }, setDate] = useState({
-    month: ausNow.getMonth(),
-    year: ausNow.getFullYear(),
+    month: parseInt(ausNow.toLocaleString().split(/\/|,/g)[0]),
+    year: parseInt(ausNow.toLocaleString().split(/\/|,/g)[2]),
   });
+  // const [{ month, year }, setDate] = useState({
+  //   month: ausNow.getMonth(),
+  //   year: ausNow.getFullYear(),
+  // });
   const [selectedDates, setSelectedDates] = useState({
     start: new Date(ausNow),
     end: new Date(""),
@@ -339,8 +343,14 @@ const AdminPage = ({ user, switchPage }) => {
   // getting all data (orders, admin data)
   useEffect(() => {
     // fetchOrderData();
-    console.log("MONTH:", ausNow.getMonth());
-    console.log("YEAR:", ausNow.getFullYear());
+    console.log("LOOK AT THIS");
+    console.log("ausNow:", ausNow);
+    console.log("new Date().toDateString():", new Date().toDateString());
+    console.log(
+      "new Date().toLocaleString().split(//|,/g):",
+      new Date().toLocaleString().split(/\/|,/g)
+    );
+
     fetchAdminData();
   }, []);
 
