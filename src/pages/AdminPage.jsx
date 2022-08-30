@@ -355,6 +355,10 @@ const AdminPage = ({ user, switchPage }) => {
       parseInt(ausNow.toLocaleString().split(/\/|,/g)[2])
     );
 
+    console.log(
+      "ausNow.toLocaleString().split(//|,/g).toString():",
+      ausNow.toLocaleString().split(/\/|,/g).toString()
+    );
     fetchAdminData();
   }, []);
 
