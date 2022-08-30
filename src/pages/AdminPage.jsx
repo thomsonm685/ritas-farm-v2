@@ -136,7 +136,7 @@ const AdminPage = ({ user, switchPage }) => {
 
   let now = new Date();
   let ausNow = new Date(
-    now.toLocaleString(undefined, { timeZone: "Australia/Sydney" })
+    now.toLocaleString("en-US", { timeZone: "Australia/Sydney" })
   );
 
   const [{ month, year }, setDate] = useState({
