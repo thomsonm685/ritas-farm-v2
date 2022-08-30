@@ -347,8 +347,12 @@ const AdminPage = ({ user, switchPage }) => {
     console.log("ausNow:", ausNow);
     console.log("new Date().toDateString():", new Date().toDateString());
     console.log(
-      "new Date().toLocaleString().split(//|,/g):",
-      new Date().toLocaleString().split(/\/|,/g)
+      "parseInt(ausNow.toLocaleString().split(//|,/g)[0]):",
+      parseInt(ausNow.toLocaleString().split(/\/|,/g)[0])
+    );
+    console.log(
+      "parseInt(ausNow.toLocaleString().split(//|,/g)[2]):",
+      parseInt(ausNow.toLocaleString().split(/\/|,/g)[2])
     );
 
     fetchAdminData();
