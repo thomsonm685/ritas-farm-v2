@@ -339,6 +339,8 @@ const AdminPage = ({ user, switchPage }) => {
   // getting all data (orders, admin data)
   useEffect(() => {
     // fetchOrderData();
+    console.log("MONTH:", ausNow.getMonth());
+    console.log("YEAR:", ausNow.getFullYear());
     fetchAdminData();
   }, []);
 
