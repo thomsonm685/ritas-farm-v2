@@ -132,11 +132,20 @@ export const LoadOrders = async (names, dates, tags) => {
   //     console.log(response.headers);
   // })
   let allTagsQuery = "";
-  [...dates, ...tags].forEach((tag, i) => {
+  [...dates].forEach((tag, i) => {
     if (i === 0) allTagsQuery = tag;
-    else allTagsQuery += " AND tag:" + tag;
+    else allTagsQuery += " OR tag:" + tag;
   });
 
+  [...tags].forEach((tag, i) => {
+    allTagsQuery += " AND tag:" + tag;
+  });
+
+  // let allTagsQuery = "";
+  // [...dates, ...tags].forEach((tag, i) => {
+  //   if (i === 0) allTagsQuery = tag;
+  //   else allTagsQuery += " AND tag:" + tag;
+  // });
   // await bulkOrders(process.env.SHOP, token, allTagsQuery);
 
   console.log("allTagsQuery:", allTagsQuery);
@@ -147,6 +156,17 @@ export const LoadOrders = async (names, dates, tags) => {
       ' AND fulfillment_status:unfulfilled")  {\n            edges {\n                node {\n                   currentTotalPriceSet{\n                        presentmentMoney{\n                          amount\n                      }\n                    }\n                    transactions{\n                      id\n                    }\n                    app{\n                      name\n                    }\n                    note\n   createdAt\n                    tags\n                    totalWeight\n                    shippingAddress {\n                        name\n                        address1\n                        address2\n                        city\n                        province\n                        zip\n                    } \n                    customer {\n                    note\n                    phone\n                    email\n                    }\n                    lineItems(first: 1000) {\n                    edges {\n                        node {\n                        discountedTotalSet{\n                          shopMoney{\n                            amount\n                          }\n                        }\n                        image {\n                            src\n                        }\n                        name\n                        quantity\n                        sku\n                        variant {\n                            id\n                        }\n                        discountedUnitPriceSet{\n                        shopMoney{\n                          amount\n                        }\n                        }\n                        variant{\n                            weight\n                            weightUnit\n                        }\n                    }\n                    }\n                    }\n                    name\n                    id\n                    fulfillmentOrders(first:1){\n                      edges{\n                        node{\n                          id\n                        }\n                      }\n                    }\n                }\n            }\n        }\n    }"""\n      ) {\n      bulkOperation {\n          id\n          status\n      }\n      userErrors {\n          field\n          message\n      }\n      }\n  }',
     variables: {},
   });
+
+  console.log(
+    "SHIT:",
+    JSON.stringify({
+      query:
+        '\n    mutation {\n      bulkOperationRunQuery(\n          query:""" \n          {orders(first:10000,  query:"tag:' +
+        allTagsQuery +
+        ' AND fulfillment_status:unfulfilled")  {\n            edges {\n                node {\n                   currentTotalPriceSet{\n                        presentmentMoney{\n                          amount\n                      }\n                    }\n                    transactions{\n                      id\n                    }\n                    app{\n                      name\n                    }\n                    note\n   createdAt\n                    tags\n                    totalWeight\n                    shippingAddress {\n                        name\n                        address1\n                        address2\n                        city\n                        province\n                        zip\n                    } \n                    customer {\n                    note\n                    phone\n                    email\n                    }\n                    lineItems(first: 1000) {\n                    edges {\n                        node {\n                        discountedTotalSet{\n                          shopMoney{\n                            amount\n                          }\n                        }\n                        image {\n                            src\n                        }\n                        name\n                        quantity\n                        sku\n                        variant {\n                            id\n                        }\n                        discountedUnitPriceSet{\n                        shopMoney{\n                          amount\n                        }\n                        }\n                        variant{\n                            weight\n                            weightUnit\n                        }\n                    }\n                    }\n                    }\n                    name\n                    id\n                    fulfillmentOrders(first:1){\n                      edges{\n                        node{\n                          id\n                        }\n                      }\n                    }\n                }\n            }\n        }\n    }"""\n      ) {\n      bulkOperation {\n          id\n          status\n      }\n      userErrors {\n          field\n          message\n      }\n      }\n  }',
+      variables: {},
+    })
+  );
 
   var config = {
     method: "post",

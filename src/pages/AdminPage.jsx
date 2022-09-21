@@ -140,7 +140,7 @@ const AdminPage = ({ user, switchPage }) => {
   );
 
   const [{ month, year }, setDate] = useState({
-    month: parseInt(ausNow.toLocaleString().split(/\/|,/g)[0]),
+    month: parseInt(ausNow.toLocaleString().split(/\/|,/g)[0]) - 1,
     year: parseInt(ausNow.toLocaleString().split(/\/|,/g)[2]),
   });
   // const [{ month, year }, setDate] = useState({
